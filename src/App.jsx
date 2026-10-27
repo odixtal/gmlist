@@ -1,43 +1,56 @@
 import { useState } from 'react';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import { SearchInput } from '@/shared/components/SearchInput';
-import { GameList } from '@/features/games/components/GameList';
-import { useGames } from '@/features/games/hooks/useGames';
-import { Spinner } from '@/shared/components/Spinner';
-import { Button } from '@/shared/components/Button';
-import { useDebounce } from '@/shared/hooks/useDebounce';
+import { Sidebar } from '@/shared/components/Sidebar';
+import { HomePage } from '@/pages/HomePage';
+import { WishlistPage } from '@/pages/WishlistPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
 
-function App() {
+function Layout() {
   const [search, setSearch] = useState('');
-  const debouncedSearch = useDebounce(search, 500);
-
-  const { games, isLoading, error, reload } = useGames(debouncedSearch);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>gmlist</h1>
-        <SearchInput
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Поиск игр..."
-        />
+        <div className="header-logo">
+          <h1>gmlist</h1>
+        </div>
+        <div className="header-search">
+          <SearchInput
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Поиск игр..."
+          />
+        </div>
+        <div className="header-menu">
+          <button className="burger-btn" onClick={() => setIsSidebarOpen(true)}>
+            ☰
+          </button>
+        </div>
       </header>
 
       <main className="app-main">
-        {isLoading && <Spinner />}
-
-        {error && (
-          <div className="error-container">
-            <p>{error}</p>
-            <Button onClick={reload}>Повторить</Button>
-          </div>
-        )}
-
-        {!isLoading && !error && (
-          <GameList games={games} />
-        )}
+        <Outlet context={{ search }} />
       </main>
+
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route path="wishlist" element={<WishlistPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
 }
 
