@@ -5,9 +5,11 @@ import { Sidebar } from '@/shared/components/Sidebar';
 import { HomePage } from '@/pages/HomePage';
 import { WishlistPage } from '@/pages/WishlistPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import type { ChangeEvent } from 'react';
+import { useLocalStorage } from '@/shared/hooks/useLocalStorage';
 
 function Layout() {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useLocalStorage('gmlist_search', '');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -19,7 +21,7 @@ function Layout() {
         <div className="header-search">
           <SearchInput
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
             placeholder="Поиск игр..."
           />
         </div>

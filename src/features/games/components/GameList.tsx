@@ -1,6 +1,11 @@
 import { GameCard } from './GameCard';
+import type { Game } from '../types';
 
-export function GameList({ games }) {
+interface GameListProps {
+    games: Game[];
+}
+
+export function GameList({ games }: GameListProps) {
     if (games.length === 0) {
         return <p className="empty-message">Игры не найдены</p>;
     }

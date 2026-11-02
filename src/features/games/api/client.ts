@@ -8,6 +8,7 @@ export const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
-    console.log(`[API Request] ${config.method.toUpperCase()} ${config.url}`);
+    const method = config.method?.toUpperCase() || 'UNKNOWN';
+    console.log(`[API Request] ${method} ${config.url}`);
     return config;
 });

@@ -1,16 +1,18 @@
 import { useGameStore } from "@/shared/store/useGameStore";
 import { useFavoriteMutation } from "../hooks/useFavoriteMutation";
+import type { Game } from "../types";
 
-export function GameCard({ game }) {
+interface GameCardProps {
+    game: Game;
+}
+
+export function GameCard({ game }: GameCardProps) {
     const { inFavorite, favorites } = useGameStore();
     const isFavorite = favorites.some((g) => g.id === game.id);
-
-
     const { mutate, isPending, isError } = useFavoriteMutation();
 
     const handleToggle = () => {
         inFavorite(game);
-
         if (!isFavorite) {
             mutate(game.id);
         }
@@ -18,7 +20,7 @@ export function GameCard({ game }) {
 
     return (
         <div className="game-card">
-            <img src={game.background_image} alt={game.name} className="game-image" />
+            <img src={game.background_image || ''} alt={game.name} className="game-image" />
             <div className="game-info">
                 <h3 className="game-title">{game.name}</h3>
                 <p className="game-rating">Рейтинг: {game.rating}</p>
@@ -29,9 +31,7 @@ export function GameCard({ game }) {
                     onClick={handleToggle}
                     disabled={isPending}
                 >
-                    {isPending
-                        ? 'Сохранение'
-                        : (isFavorite ? 'Удалить' : 'В избранное')}
+                    {isPending ? 'Сохранение' : (isFavorite ? 'Удалить' : 'В избранное')}
                 </button>
 
                 {isError && <p style={{ color: 'red', fontSize: '8px' }}>Ошибка сервера</p>}
