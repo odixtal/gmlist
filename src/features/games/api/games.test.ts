@@ -1,10 +1,9 @@
 import { fetchGames } from './games';
 import { apiClient } from './client';
-import { vi } from 'vitest';
 
-vi.mock('./client', () => ({
+jest.mock('./client', () => ({
     apiClient: {
-        get: vi.fn()
+        get: jest.fn()
     }
 }));
 
@@ -18,7 +17,7 @@ describe('Функция fetchGames', () => {
             }
         };
 
-        (apiClient.get as any).mockResolvedValueOnce(mockResponse);
+        (apiClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
         const games = await fetchGames('witcher');
 
         expect(games).toHaveLength(1);
@@ -26,7 +25,7 @@ describe('Функция fetchGames', () => {
     });
 
     test('выбрасывает ошибку при неверном формате данных', async () => {
-        (apiClient.get as any).mockResolvedValueOnce({ data: { bad: 'format' } });
+        (apiClient.get as jest.Mock).mockResolvedValueOnce({ data: { bad: 'format' } });
         await expect(fetchGames('witcher')).rejects.toThrow('Некорректный формат данных от API');
     });
 });
